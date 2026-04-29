@@ -1,0 +1,1309 @@
+<!doctype html>
+<html lang="zh">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>暨南大学鸟类不完全观察记录</title>
+    <style>
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      body {
+        font-family: "Segoe UI", "Helvetica Neue", sans-serif;
+        background: #f5f3ef;
+        color: #2e3b2c;
+        min-height: 100vh;
+        padding-bottom: 20px;
+      }
+
+      .music-ctrl {
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        z-index: 999;
+        background: rgba(255, 250, 240, 0.92);
+        backdrop-filter: blur(8px);
+        padding: 10px 16px 12px;
+        border-radius: 60px;
+        box-shadow: 0 8px 20px rgba(0, 20, 0, 0.1);
+        border: 1px solid #dccbb8;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+
+      .listen-text {
+        font-size: 12px;
+        letter-spacing: 2px;
+        color: #6b7c5e;
+        margin-bottom: 4px;
+        font-weight: 400;
+        white-space: normal;
+        max-width: 200px;
+        text-align: center;
+      }
+
+      .music-controls {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .music-btn {
+        background: #6b8c5c;
+        border: none;
+        color: white;
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        font-size: 20px;
+        cursor: pointer;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        border: 1px solid #4e6b42;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: 0.2s;
+      }
+
+      .music-btn:hover {
+        background: #557a45;
+      }
+
+      .music-btn.off {
+        background: #b1a089;
+        border-color: #8f7e6a;
+      }
+
+      .music-btn.off:hover {
+        background: #9a8b78;
+      }
+
+      .music-btn.small {
+        width: 36px;
+        height: 36px;
+        font-size: 16px;
+      }
+
+      .music-label {
+        font-size: 13px;
+        font-weight: 500;
+        color: #3e5137;
+        max-width: 140px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+
+      .app-container {
+        max-width: 1000px;
+        margin: 0 auto;
+        padding: 20px 24px 80px;
+      }
+
+      .header {
+        margin-bottom: 30px;
+        text-align: center;
+      }
+
+      h1 {
+        font-size: 3rem;
+        font-weight: 400;
+        color: #2d4a2d;
+        letter-spacing: 4px;
+      }
+
+      .subhead {
+        color: #5c6e53;
+        font-style: italic;
+      }
+
+      .birds-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+        gap: 24px;
+        margin-top: 30px;
+      }
+
+      .bird-card {
+        background: white;
+        border-radius: 28px;
+        padding: 18px 8px 16px;
+        box-shadow: 0 8px 12px rgba(60, 50, 30, 0.05);
+        cursor: pointer;
+        transition: 0.2s;
+        border: 1px solid #e5d9cc;
+        text-align: center;
+      }
+
+      .bird-card:hover {
+        transform: translateY(-6px);
+        box-shadow: 0 16px 24px -8px rgba(50, 70, 30, 0.15);
+      }
+
+      .bird-avatar {
+        width: 110px;
+        height: 110px;
+        border-radius: 50%;
+        object-fit: cover;
+        margin: 0 auto 12px;
+        border: 4px solid #e1d7cb;
+        background: #dad1c4;
+      }
+
+      .bird-name {
+        font-weight: 600;
+        font-size: 1.35rem;
+        color: #2d4529;
+      }
+
+      .bird-latin {
+        font-size: 0.8rem;
+        color: #7f8e74;
+        font-style: italic;
+      }
+
+      .detail-view {
+        display: none;
+      }
+
+      .back-btn {
+        background: none;
+        border: 1.5px solid #7f9a6b;
+        color: #3d5e32;
+        padding: 10px 22px;
+        border-radius: 40px;
+        font-size: 1.1rem;
+        margin-bottom: 24px;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .detail-header h2 {
+        font-size: 2.6rem;
+        font-weight: 350;
+        color: #1e3b1a;
+        border-left: 8px solid #7e9f6e;
+        padding-left: 24px;
+      }
+
+      .free-content {
+        background: #fbf7f0;
+        border-radius: 36px 16px 36px 16px;
+        padding: 28px;
+        margin: 24px 0;
+        border: 1px solid #dfd6c8;
+      }
+
+      .free-content img {
+        max-width: 100%;
+        height: auto;
+        border-radius: 18px;
+        margin: 16px 0;
+        cursor: zoom-in;
+      }
+
+      .free-content video {
+        max-width: 100%;
+        max-height: 85vh;
+        border-radius: 18px;
+        margin: 16px 0;
+        background: #1a1e14;
+      }
+
+      .free-content p {
+        margin-bottom: 1.2em;
+        line-height: 1.7;
+        word-wrap: break-word;
+        overflow-wrap: break-word;
+      }
+
+      .map-title {
+        font-size: 1.3rem;
+        font-weight: 500;
+        color: #2e4a2e;
+        margin-bottom: 10px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .map-title i {
+        color: #7e9f6e;
+        font-size: 1.2rem;
+      }
+
+      .video-portrait {
+        max-width: 100%;
+        max-height: 90vh;
+        width: auto;
+        height: auto;
+        display: block;
+        margin: 16px auto;
+        border-radius: 18px;
+      }
+
+      img[alt="校园地图"] {
+        max-height: 80vh;
+        width: auto !important;
+        display: block;
+        margin: 16px auto;
+      }
+
+      .lightbox {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.92);
+        z-index: 10000;
+        justify-content: center;
+        align-items: center;
+        cursor: zoom-out;
+      }
+
+      .lightbox img,
+      .lightbox video {
+        max-width: 95%;
+        max-height: 95vh;
+        object-fit: contain;
+        border-radius: 12px;
+        box-shadow: 0 0 30px rgba(0, 0, 0, 0.5);
+      }
+    </style>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+    />
+  </head>
+
+  <body>
+    <div id="lightbox" class="lightbox">
+      <span
+        id="lightboxClose"
+        style="
+          position: absolute;
+          top: 20px;
+          right: 30px;
+          z-index: 10001;
+          font-size: 36px;
+          color: white;
+          background: rgba(0, 0, 0, 0.5);
+          backdrop-filter: blur(8px);
+          border-radius: 50%;
+          width: 48px;
+          height: 48px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          cursor: pointer;
+          transition: 0.2s;
+          border: 1px solid rgba(255, 255, 255, 0.3);
+        "
+        title="关闭"
+        >✕</span
+      >
+      <div
+        style="
+          position: relative;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          width: 100%;
+          height: 100%;
+        "
+      ></div>
+    </div>
+
+    <div class="music-ctrl" id="musicController">
+      <div class="listen-text">
+        这里有一些我练过或者想练的音乐，无聊的话可以听听
+      </div>
+      <div class="music-controls">
+        <span class="music-label" id="musicLabel">🎵 加载中...</span>
+        <button class="music-btn" id="musicToggleBtn" aria-label="播放/暂停">
+          <i class="fas fa-play"></i>
+        </button>
+        <button class="music-btn small" id="nextTrackBtn" aria-label="下一首">
+          <i class="fas fa-step-forward"></i>
+        </button>
+      </div>
+    </div>
+
+    <audio id="bgMusic" preload="auto"></audio>
+
+    <main class="app-container">
+      <div class="header">
+        <h1>🕊️ 暨南大学鸟类不完全观察记录</h1>
+        <div class="subhead">一份草率的个人观察笔记🥰🥰</div>
+        <p style="margin-top: 12px; color: #657a58">作者：黎某</p>
+      </div>
+
+      <div id="homeView">
+        <div class="birds-grid" id="birdsGrid"></div>
+      </div>
+
+      <div id="detailView" class="detail-view">
+        <button class="back-btn" id="backToHomeBtn">
+          <i class="fas fa-arrow-left"></i> 返回
+        </button>
+        <div id="detailContent"></div>
+      </div>
+    </main>
+
+    <script>
+      (function () {
+        const bgMusicList = [
+          { title: "Like a star", src: "audio/like-a-star.mp3" },
+          { title: "風待ち", src: "audio/kazemachi.mp3" },
+          { title: "花", src: "audio/hana.mp3" },
+          { title: "流れ行く云", src: "audio/nagareyuku-kumo.mp3" },
+          { title: "River Flows In You", src: "audio/River Flows In You - 郑晟河.mp3" },
+          { title: "Time Travel", src: "audio/Time Travel - 岸部眞明.mp3" },
+          { title: "風の詩", src: "audio/風の詩 - 押尾コータロー.mp3" },
+          { title: "願桜", src: "audio/願桜 - GIN.mp3" },
+          { title: "Always With Me", src: "audio/Always With Me - 郑晟河.mp3" },
+          { title: "ハナミズキ", src: "audio/ハナミズキ - 松井祐貴.mp3" },
+          { title: "君と僕", src: "audio/君と僕 - 松井祐貴.mp3" },
+          { title: "奇迹の山", src: "audio/kiseki-no-yama.mp3" },
+          { title: "Elephant King", src: "Elephant King - Trace Bundy.mp3" }
+        ];
+
+        const birdsData = [
+          {
+            id: "bai-ge",
+            name: "八哥",
+            latin: "Acridotheres cristatellus",
+            avatar: "images/bai-ge/avatar-bai-ge.png",
+            freeContent: `
+            <div class="map-title"><i class="fas fa-map-location-dot"></i> 观察地点：</div>
+            <img src="images/bai-ge/campus-map.jpg" alt="校园地图" style="width: 100%; border-radius: 18px; box-shadow: 0 4px 12px rgba(0,0,0,0.08); margin-bottom: 24px;">
+            <div style="display:flex; gap:12px; margin:20px 0;">
+              <img src="images/bai-ge/IMG_20260422_115844.jpg" style="width:50%; border-radius:24px;">
+            </div>
+            <p style="color:#6b7c5e;"><i>📸 拍摄日期：2026.04.22 设备：手机+望远镜（华为 pura70 pro +圣途森林人8x32） 地点：旭日运动场前广场上的木棉树</i></p>
+            <p>洗澡🥰🥰</p>
+            <video controls playsinline preload="metadata" style="width:100%; border-radius:24px; margin:10px 0;">
+              <source src="videos/bai-ge/bath.mp4" type="video/mp4">
+            </video>
+            <p style="color:#6b7c5e;"><i>📸 拍摄日期：2026.04.24 设备：华为 pura70 pro 地点：化材楼后的停车场上</i></p>
+
+            <video controls playsinline preload="metadata" style="width:100%; border-radius:24px; margin:10px 0;">
+              <source src="videos/bai-ge/Vid-20260421-165119.mp4" type="video/mp4">
+            </video>
+            <p style="color:#6b7c5e;"><i>📸 拍摄日期：2026.04.21 设备：手机+望远镜（华为 pura70 pro +圣途森林人8x32） 地点：富力教学楼东侧</i></p>
+          `,
+          },
+          {
+            id: "ba-sheng-du-juan",
+            name: "八声杜鹃",
+            latin: "Cacomantis merulinus",
+            avatar: "images/ba-sheng-du-juan/avatar-ba-sheng-du-juan.png",
+            freeContent: `
+            <div class="map-title"><i class="fas fa-map-location-dot"></i> 观察地点：</div>
+            <img src="images/ba-sheng-du-juan/campus-map.jpg" alt="校园地图" style="width: 100%; border-radius: 18px; box-shadow: 0 4px 12px rgba(0,0,0,0.08); margin-bottom: 24px;">
+            <p>其实我没有拍到过😭</p>
+            <p>只听到了声音：</p>
+            <p>中间还穿插着<del>电动车</del>长尾缝叶莺的叫声</p>
+            <p>🎶 叫声：</p>
+           <audio controls style="width: 100%; margin: 10px 0;">
+             <source src="videos/ba-sheng-du-juan/sing.mp3" type="audio/mpeg">
+             您的浏览器不支持音频播放。
+           </audio>
+           
+            <p style="color:#6b7c5e;"><i>📸 拍摄日期：2025.04.03  设备：华为 pura70 pro  地点：周转楼北侧</i></p>
+          `,
+          },
+          {
+            id: "bai-hou-hong-tun-bei",
+            name: "白喉红臀鹎",
+            latin: "Pycnonotus aurigaster",
+            avatar: "images/bai-hou-hong-tun-bei/avatar-bai-hou-hong-tun-bei.png",
+            freeContent: `
+            <div class="map-title"><i class="fas fa-map-location-dot"></i> 观察地点：</div>
+            <img src="images/bai-hou-hong-tun-bei/campus-map.jpg" alt="校园地图" style="width: 100%; border-radius: 18px; box-shadow: 0 4px 12px rgba(0,0,0,0.08); margin-bottom: 24px;">
+
+            <p>一闪而过</p>
+            <video controls playsinline preload="metadata" style="width:100%; border-radius:24px; margin:10px 0;">
+              <source src="videos/bai-hou-hong-tun-bei/petal_20260427_104129.mp4" type="video/mp4">
+            </video>
+            <p style="color:#6b7c5e;"><i>📸 拍摄日期：2026.04.27 设备：手机+望远镜（华为 pura70 pro +圣途森林人8x32） 地点：奥园楼前的树上</i></p>
+            <p>什么，你问我为什么判断它是白喉红臀鹎而不是黄臀鹎？🤔</p>
+            <p>当然是因为我盯帧发现了它的红屁股😭</p>
+            <div style="display:flex; gap:12px; margin:20px 0;">
+              <img src="images/bai-hou-hong-tun-bei/屏幕截图-2026-04-27-112536.png" style="width:50%; border-radius:24px;">
+            </div>
+          `,
+          },
+          {
+            id: "bai-ji-ling",
+            name: "白鹡鸰",
+            latin: "Motacilla alba",
+            avatar: "images/bai-ji-ling/avatar-bai-ji-ling.jpg",
+            freeContent: `
+            <div class="map-title"><i class="fas fa-map-location-dot"></i> 观察地点：</div>
+            <img src="images/bai-ji-ling/campus-map.jpg" alt="校园地图" style="width: 100%; border-radius: 18px; box-shadow: 0 4px 12px rgba(0,0,0,0.08); margin-bottom: 24px;">
+            <p>神秘的黑白色块：</p>
+            <div style="display:flex; gap:12px; margin:20px 0;">
+              <img src="images/bai-ji-ling/IMG_20260414_.jpg" style="width:50%; border-radius:24px;">
+              <img src="images/bai-ji-ling/IMG_20260414_160904.jpg" style="width:50%; border-radius:24px;">
+            </div>
+            <p>觅食的白鹡鸰</p>
+            <video controls playsinline preload="metadata" style="width:100%; border-radius:24px; margin:10px 0;">
+              <source src="videos/bai-ji-ling/VID_20260414_160926.mp4" type="video/mp4">
+            </video>
+            <p style="color:#6b7c5e;"><i>📸 拍摄日期：2026.04.14 设备：华为 pura70 pro 地点：图书馆前草坪</i></p>
+          `,
+          },
+          {
+            id: "bai-tou-bei",
+            name: "白头鹎",
+            latin: "Pycnonotus sinensis",
+            avatar: "images/bai-tou-bei/avatar-bai-tou-bei.jpg",
+            freeContent: `
+            <div class="map-title"><i class="fas fa-map-location-dot"></i> 观察地点：</div>
+            <img src="images/bai-tou-bei/campus-map.jpg" alt="校园地图" style="width: 100%; border-radius: 18px; box-shadow: 0 4px 12px rgba(0,0,0,0.08); margin-bottom: 24px;">
+
+             <p>以防你不知道小鸟是怎么在栏杆上移动的</p>
+            <video controls playsinline preload="metadata" style="width:100%; border-radius:24px; margin:10px 0;">
+              <source src="videos/bai-tou-bei/petal_20260429_141241.mp4" type="video/mp4">
+            </video>
+
+            <video controls playsinline preload="metadata" style="width:100%; border-radius:24px; margin:10px 0;">
+              <source src="videos/bai-tou-bei/petal_20260429_140717.mp4" type="video/mp4">
+            </video>
+            <p style="color:#6b7c5e;"><i>📸 拍摄日期：2026.04.28 设备：华为 pura70 pro 地点：真如苑一、二栋之间</i></p>
+
+            <p>小黄花🤔（嚼嚼嚼）好吃🥰被风吹走😨</p>
+            <video controls playsinline preload="metadata" style="width:100%; border-radius:24px; margin:10px 0;">
+              <source src="videos/bai-tou-bei/VID_20260429_164843.mp4" type="video/mp4">
+            </video>
+            <p style="color:#6b7c5e;"><i>📸 拍摄日期：2026.04.29 设备：华为 pura70 pro 地点：奥园楼二楼</i></p>
+          `,
+          },
+          {
+            id: "ban-zui-ya",
+            name: "斑嘴鸭",
+            latin: "Anas zonorhyncha",
+            avatar: "images/ban-zui-ya/avatar-ban-zui-ya.png",
+            freeContent: `
+            <div class="map-title"><i class="fas fa-map-location-dot"></i> 观察地点：</div>
+            <img src="images/ban-zui-ya/campus-map.jpg" alt="校园地图" style="width: 100%; border-radius: 18px; box-shadow: 0 4px 12px rgba(0,0,0,0.08); margin-bottom: 24px;">
+
+            <p>雁形目 鸭科</p>
+            <p>  最开始以为是人工养殖的，但是查询相关资料发现2020年开始禁止养殖了，不知是偷偷养的还是野鸭子？</p>
+            <div style="display:flex; gap:12px; margin:20px 0;">
+              <img src="images/ban-zui-ya/1.jpg" style="width:50%; border-radius:24px;">
+              <img src="images/ban-zui-ya/2.jpg" style="width:50%; border-radius:24px;">
+            </div>
+            <p style="color:#6b7c5e;"><i>📸 拍摄日期：2025.04.16 设备：华为 pura70 pro 地点：南湖</i></p>
+          `,
+          },
+          {
+            id: "chang-wei-feng-ye-ying",
+            name: "长尾缝叶莺",
+            latin: "Orthotomus sutorius",
+            avatar: "images/chang-wei-feng-ye-ying/avatar-chang-wei-feng-ye-ying.jpg",
+            freeContent: `
+            <div class="map-title"><i class="fas fa-map-location-dot"></i> 观察地点：</div>
+            <img src="images/chang-wei-feng-ye-ying/campus-map.png" alt="校园地图" style="width: 100%; border-radius: 18px; box-shadow: 0 4px 12px rgba(0,0,0,0.08); margin-bottom: 24px;">
+            <h3>我听见一辆电动车在天上叫</h3>
+            <p>虽然看清了，但是没有拍到清晰的图像</p>
+            <p>树丛中的模糊影像：</p>
+            <video controls playsinline preload="metadata" style="width:100%; border-radius:24px; margin:10px 0;">
+              <source src="videos/chang-wei-feng-ye-ying/1.mp4" type="video/mp4">
+            </video>
+            <p>叫声：</p>
+            <video controls playsinline preload="metadata" style="width:100%; border-radius:24px; margin:10px 0;">
+              <source src="videos/chang-wei-feng-ye-ying/sing.mp4" type="video/mp4">
+            </video>
+            <p>是不是有点像电动车😀</p>
+            <p style="color:#6b7c5e;"><i>📸 拍摄日期：2026.04.03  设备：华为 pura70 pro  地点：真如苑二栋门前的马路对面</i></p>
+          `,
+          },
+          {
+            id: "da-ni-zhuo-mu-niao",
+            name: "大拟啄木鸟",
+            latin: "Psilopogon virens",
+            avatar: "images/da-ni-zhuo-mu-niao/avatar-da-ni-zhuo-mu-niao.png",
+            freeContent: `
+           <div class="map-title"><i class="fas fa-map-location-dot"></i> 观察地点：</div>
+           <img src="images/da-ni-zhuo-mu-niao/campus-map.jpg" alt="校园地图" style="width: 100%; border-radius: 18px; box-shadow: 0 4px 12px rgba(0,0,0,0.08); margin-bottom: 24px;">
+          <p>啄木鸟目   拟啄木鸟科</p>
+           <div style="display:flex; flex-wrap:wrap; gap:12px; margin:20px 0;">
+            <img src="images/da-ni-zhuo-mu-niao/IMG_20260414_111405.jpg" style="width:calc(50% - 6px); border-radius:24px;">
+            <img src="images/da-ni-zhuo-mu-niao/IMG_20260414_111539.jpg" style="width:calc(50% - 6px); border-radius:24px;">
+            <img src="images/da-ni-zhuo-mu-niao/IMG_20260414_111616.jpg" style="width:calc(50% - 6px); border-radius:24px;">
+           </div>
+            <p style="color:#6b7c5e;"><i>📸 拍摄日期：2026.04.14  设备：手机＋望远镜（华为 pura70 pro＋圣途 森林人8x32）  地点：旭日运动场前广场上的木棉树</i></p>
+          `,
+          },
+          {
+            id: "da-shan-que",
+            name: "大山雀",
+            latin: "Parus major",
+            avatar: "images/da-shan-que/avatar-da-shan-que.png",
+            freeContent: `
+            <div class="map-title"><i class="fas fa-map-location-dot"></i> 观察地点：</div>
+            <img src="images/da-shan-que/campus-map.jpg" alt="校园地图" style="width: 100%; border-radius: 18px; box-shadow: 0 4px 12px rgba(0,0,0,0.08); margin-bottom: 24px;">
+            <p>在从大量跳跳跳视频中截出的唯一一帧：</p>
+            <div style="display:flex; gap:12px; margin:20px 0;">
+              <img src="images/da-shan-que/01.jpg" style="width:50%; border-radius:24px;">
+            </div>
+            <p style="color:#6b7c5e;"><i>📸 拍摄日期：2026.04.19  设备：华为 pura70 pro 地点：建阳篮球场附近</i></p>
+
+            <p>觅食</p>
+            <video controls playsinline preload="metadata" style="width:100%; border-radius:24px; margin:10px 0;">
+              <source src="videos/da-shan-que/eat.mp4" type="video/mp4">
+            </video>
+            <p style="color:#6b7c5e;"><i>📸 拍摄日期：2026.04.20  设备：华为 pura70 pro 地点：化材楼附近</i></p>
+
+            <p>树丛中露出的小东西</p>
+            <video controls playsinline preload="metadata" style="width:100%; border-radius:24px; margin:10px 0;">
+              <source src="videos/da-shan-que/petal_20260427_002718.mp4" type="video/mp4">
+            </video>
+            <p style="color:#6b7c5e;"><i>📸 拍摄日期：2026.04.26  设备：手机+望远镜（华为 pura70 pro + 圣途 森林人8x32） 地点：明湖楼入口前</i></p>
+          `,
+          },
+          {
+            id: "hei-ling-liang-niao",
+            name: "黑领椋鸟",
+            latin: "Gracupica nigricollis",
+            avatar: "images/hei-ling-liang-niao/avatar-hei-ling-liang-niao.png",
+            freeContent: `
+            <div class="map-title"><i class="fas fa-map-location-dot"></i> 观察地点：</div>
+            <img src="images/hei-ling-liang-niao/campus-map.jpg" alt="校园地图" style="width: 100%; border-radius: 18px; box-shadow: 0 4px 12px rgba(0,0,0,0.08); margin-bottom: 24px;">
+
+            <div style="display:flex; flex-wrap:wrap; gap:12px; margin:20px 0;">
+            <img src="images/hei-ling-liang-niao/IMG_20260416_.jpg" style="width:calc(50% - 6px); border-radius:24px;">
+            <img src="images/hei-ling-liang-niao/IMG_20260416_172001.jpg" style="width:calc(50% - 6px); border-radius:24px;">
+            <img src="images/hei-ling-liang-niao/IMG_20260416_172002.jpg" style="width:calc(50% - 6px); border-radius:24px;">
+           </div>
+            <p style="color:#6b7c5e;"><i>📸 拍摄日期：2026.04.16 设备：手机+望远镜（华为 pura70 pro + 胜途 小钢炮8x32） 地点：图书馆前的草坪</i></p>
+          `,
+          },
+          {
+            id: "hong-er-bei",
+            name: "红耳鹎",
+            latin: "Pycnonotus jocosus",
+            avatar: "images/hong-er-bei/avatar-hong-er-bei.jpg",
+            freeContent: `
+            <div class="map-title"><i class="fas fa-map-location-dot"></i> 观察地点：</div>
+            <img src="images/hong-er-bei/campus-map.jpg" alt="校园地图" style="width: 100%; border-radius: 18px; box-shadow: 0 4px 12px rgba(0,0,0,0.08); margin-bottom: 24px;">
+            <p>小鸟你的头怎么尖尖的</p>
+            <p>小鸟你的屁股怎么红红的</p>
+            <p>小鸟你怎么有腮红</p>
+            <div style="display:flex; gap:12px; margin:20px 0;">
+              <img src="images/hong-er-bei/IMG_20250419_155025.jpg" style="width:50%; border-radius:24px;">
+            </div>
+            <p style="color:#6b7c5e;"><i>📸 拍摄日期：2025.04.19 设备：华为 pura70 pro 地点:礼堂与明湖之间的草坪</i></p>
+            <div style="display:flex; gap:12px; margin:20px 0;">
+              <img src="images/hong-er-bei/IMG_20250427_143545.jpg" style="width:50%; border-radius:24px;">
+            </div>
+            <p style="color:#6b7c5e;"><i>📸 拍摄日期：2025.04.27 设备：华为 pura70 pro 地点:南门前的草坪</i></p>
+            
+            <p>邪恶尖尖鸟吞噬草尖尖：</p>
+            <video controls playsinline preload="metadata" style="width:100%; border-radius:24px; margin:10px 0;">
+              <source src="videos/hong-er-bei/VID-20251216-094051.mp4" type="video/mp4">
+            </video>
+            <p style="color:#6b7c5e;"><i>📸 拍摄日期：2025.12.16 设备：华为 pura70 pro 地点真如苑二栋</i></p>
+            <video controls playsinline preload="metadata" style="width:100%; border-radius:24px; margin:10px 0;">
+              <source src="videos/hong-er-bei/VID-20260110-120328.mp4" type="video/mp4">
+            </video>
+            <p style="color:#6b7c5e;"><i>📸 拍摄日期：2026.01.10 设备：华为 pura70 pro 地点:真如苑二栋</i></p>
+
+          `,
+          },
+          {
+            id: "hong-zui-lan-que",
+            name: "红嘴蓝鹊",
+            latin: "Urocissa erythroryncha",
+            avatar: "images/hong-zui-lan-que/avatar-hong-zui-lan-que.png",
+            freeContent: `
+            <div class="map-title"><i class="fas fa-map-location-dot"></i> 观察地点：</div>
+            <img src="images/hong-zui-lan-que/campus-map.jpg" alt="校园地图" style="width: 100%; border-radius: 18px; box-shadow: 0 4px 12px rgba(0,0,0,0.08); margin-bottom: 24px;">
+            
+            <p>不得不说颜值很高呢</p>
+            
+            <div style="display:flex; gap:12px; margin:20px 0;">
+              <img src="images/hong-zui-lan-que/1.jpg" style="width:50%; border-radius:24px;">
+            </div>
+            
+            <p style="color:#6b7c5e;"><i>📸 拍摄日期：2025.04.15  设备：华为 pura70 pro  地点：食堂附近的林荫小道</i></p>
+
+            <p>偷吃猫粮：</p>
+            <video controls playsinline preload="metadata" style="width:100%; border-radius:24px; margin:10px 0;">
+              <source src="videos/hong-zui-lan-que/steal.mp4" type="video/mp4">
+            </video>
+            <p style="color:#6b7c5e;"><i>📸 拍摄日期：2025.04.15  设备：华为 pura70 pro  地点：明湖与学九栋之间的林荫小道</i></p>
+             <p>用它的那个大红脚把小饼干踩在树枝上：</p>
+            <video controls playsinline preload="metadata" style="width:100%; border-radius:24px; margin:10px 0;">
+              <source src="videos/hong-zui-lan-que/cookie.mp4" type="video/mp4">
+            </video>
+            <p style="color:#6b7c5e;"><i>📸 拍摄日期：2025.04.15  设备：华为 pura70 pro  地点：明湖与学九栋之间的林荫小道</i></p>
+          `,
+          },
+          {
+            id: "ma-que",
+            name: "麻雀",
+            latin: "Passer montanus",
+            avatar: "images/ma-que/avatar-ma-que.jpg",
+            freeContent: `
+            <div class="map-title"><i class="fas fa-map-location-dot"></i> 观察地点：</div>
+            <img src="images/ma-que/campus-map.jpg" alt="校园地图" style="width: 100%; border-radius: 18px; box-shadow: 0 4px 12px rgba(0,0,0,0.08); margin-bottom: 24px;">
+            <p>跳跳跳</p>
+            <video controls playsinline preload="metadata" style="width:100%; border-radius:24px; margin:10px 0;">
+              <source src="videos/ma-que/VID_20260403_102518.mp4" type="video/mp4">
+            </video>
+            <p style="color:#6b7c5e;"><i>📸 拍摄日期：2025.04.03  设备：华为 pura70 pro  地点：图书馆东南侧的草地上</i></p>
+             
+          `,
+          },
+          {
+            id: "pu-tong-cui-niao",
+            name: "普通翠鸟",
+            latin: "Alcedo atthis",
+            avatar: "images/pu-tong-cui-niao/avatar-pu-tong-cui-niao.png",
+            freeContent: `
+            <div class="map-title"><i class="fas fa-map-location-dot"></i> 观察地点：</div>
+            <img src="images/pu-tong-cui-niao/campus-map.jpg" alt="校园地图" style="width: 100%; border-radius: 18px; box-shadow: 0 4px 12px rgba(0,0,0,0.08); margin-bottom: 24px;">
+            <p>隔着半个湖面拍的，距离很远，只能看到模糊的色块：</p>
+            <div style="display:flex; gap:12px; margin:20px 0;">
+              <img src="images/pu-tong-cui-niao/1.jpg" style="width:50%; border-radius:24px;">
+              <img src="images/pu-tong-cui-niao/2.jpg" style="width:50%; border-radius:24px;">
+            </div>
+            <p style="color:#6b7c5e;"><i>📸 拍摄日期：2025.04.18 设备：华为 pura70 pro  地点：明湖中央</i></p>
+            <p>三十年河东，三十年河西😎</p>
+            <video controls playsinline preload="metadata" style="width:100%; border-radius:24px; margin:10px 0;">
+              <source src="videos/pu-tong-cui-niao/VID_20260427_154058.mp4" type="video/mp4">
+            </video>
+            <p style="color:#6b7c5e;"><i>📸 拍摄日期：2026.04.27 设备：手机+望远镜（华为 pura70 pro + 圣途森林人8x32）  地点：明湖中央</i></p>
+          `,
+          },
+          {
+            id: "pu-tong-ye-ying",
+            name: "普通夜鹰",
+            latin: "Caprimulgus indicus",
+            avatar: "images/pu-tong-ye-ying/avatar-ye-ying.png",
+            freeContent: `
+            <div class="map-title"><i class="fas fa-map-location-dot"></i> 观察地点：</div>
+            <img src="images/pu-tong-ye-ying/campus-map.jpg" alt="校园地图" style="width: 100%; border-radius: 18px; box-shadow: 0 4px 12px rgba(0,0,0,0.08); margin-bottom: 24px;">
+            
+            <p>没有拍到</p>
+            <p>像激光枪一样的叫声</p>
+            <p>🎶 叫声：</p>
+           <audio controls style="width: 100%; margin: 10px 0;">
+             <source src="videos/pu-tong-ye-ying/VID_20260410_191525-soConvert.mp3" type="audio/mpeg">
+             您的浏览器不支持音频播放。
+           </audio>
+            <p style="color:#6b7c5e;"><i>📸 拍摄日期：2025.04.03  设备：华为 pura70 pro  地点：真如苑二栋</i></p>
+          `,
+          },
+          {
+            id: "que-qu",
+            name: "鹊鸲",
+            latin: "Copsychus saularis",
+            avatar: "images/que-qu/avatar-que-qu.png",
+            freeContent: `
+            <div class="map-title"><i class="fas fa-map-location-dot"></i> 观察地点：</div>
+            <img src="images/que-qu/campus-map.jpg" alt="校园地图" style="width: 100%; border-radius: 18px; box-shadow: 0 4px 12px rgba(0,0,0,0.08); margin-bottom: 24px;">
+
+            <p>在路灯上唱歌的鹊鸲：</p>
+            <video controls playsinline preload="metadata" style="width:100%; border-radius:24px; margin:10px 0;">
+              <source src="videos/que-qu/sing.mp4" type="video/mp4">
+            </video>
+            <p style="color:#6b7c5e;"><i>📸 拍摄日期：2025.06.28 设备：华为 Pura 70 Pro 地点：食堂前篮球场</i></p>
+          `,
+          },
+          {
+            id: "wu-dong",
+            name: "乌鸫",
+            latin: "Turdus merula",
+            avatar: "images/wu-dong/avatar-wu-dong.jpg",
+            freeContent: `
+            <div class="map-title"><i class="fas fa-map-location-dot"></i> 观察地点：</div>
+            <img src="images/wu-dong/campus-map.jpg" alt="校园地图" style="width: 100%; border-radius: 18px; box-shadow: 0 4px 12px rgba(0,0,0,0.08); margin-bottom: 24px;">
+            <h3>鸫鸫我是你粉丝🥺</h3>
+            <h3>骗你的，其实是因为你最好拍了😭</h3>
+
+            <p>每到五月，似乎就有许多小乌鸫从巢中落下，好在它们的父母没有抛弃它们，而是在地上进行喂食</p>
+            <video controls playsinline preload="metadata" class="video-portrait">
+              <source src="videos/wu-dong/junior1.mp4" type="video/mp4">
+              <source src="videos/wu-dong/junior2.mp4" type="video/mp4">
+              <source src="videos/wu-dong/junior3.mp4" type="video/mp4">
+              <source src="videos/wu-dong/junior4.mp4" type="video/mp4">
+            </video>
+            <video controls playsinline preload="metadata" class="video-portrait">
+              <source src="videos/wu-dong/junior2.mp4" type="video/mp4">
+            </video>
+            <video controls playsinline preload="metadata" class="video-portrait">
+              <source src="videos/wu-dong/junior3.mp4" type="video/mp4">
+            </video>
+            <video controls playsinline preload="metadata" class="video-portrait">
+              <source src="videos/wu-dong/junior4.mp4" type="video/mp4">
+            </video>
+            <p style="color:#6b7c5e;"><i>📸 拍摄日期：2025.05.28 设备：华为 Pura 70 Pro 地点：食堂前篮球场</i></p>
+            <p>乌鸫在吃乌鸫面：</p>
+            <video controls playsinline preload="none" class="video-portrait">
+              <source src="videos/wu-dong/eat.mp4" type="video/mp4">
+            </video>
+            <p>唱歌：</p>
+            <p>喳喳喳喳！</p>
+            <video controls playsinline preload="none" class="video-portrait">
+              <source src="videos/wu-dong/sing.mp4" type="video/mp4">
+            </video>
+            <p>梳理毛发：</p>
+            <video controls playsinline preload="none" class="video-portrait">
+              <source src="videos/wu-dong/comb.mp4" type="video/mp4">
+            </video>
+            <p>模仿各种鸟叫</p>
+            <video controls playsinline preload="none" class="video-portrait">
+              <source src="videos/wu-dong/Vid-20260425-075240.mp4" type="video/mp4">
+            </video>
+          `,
+          },
+          {
+            id: "xi-que",
+            name: "喜鹊",
+            latin: "Pica serica",
+            avatar: "images/xi-que/avatar-xi-que.jpg",
+            freeContent: `
+            <div class="map-title"><i class="fas fa-map-location-dot"></i> 观察地点：</div>
+            <img src="images/xi-que/campus-map.jpg" alt="校园地图" style="width: 100%; border-radius: 18px; box-shadow: 0 4px 12px rgba(0,0,0,0.08); margin-bottom: 24px;">
+        
+            <img src="images/xi-que/xi-que-1.jpg" alt="喜鹊" style="width:100%; border-radius:20px; margin:15px 0;">
+            <p>叼走了什么东西：</p>
+            <video controls playsinline preload="metadata" style="width:100%; border-radius:24px;">
+              <source src="videos/xi-que/1.mp4" type="video/mp4">
+            </video>
+            <p style="color:#6b7c5e;"><i>📸 拍摄日期：2026.03.20   设备：华为 pura70 pro  地点：图书馆门前的草坪</i></p>
+            <p>踱步：</p>
+            <video controls playsinline preload="metadata" style="width:100%; border-radius:24px;">
+              <source src="videos/xi-que/2.mp4" type="video/mp4">
+            </video>
+            <p style="color:#6b7c5e;"><i>📸 拍摄日期：2025.12.06   设备：华为 pura70 pro  地点：图书馆门前的草坪</i></p>
+            <p>很乖地停留了三四分钟</p>
+            <video controls playsinline preload="metadata" style="width:100%; border-radius:24px;">
+              <source src="videos/xi-que/VID_20260429_094713.mp4" type="video/mp4">
+            </video>
+            <p style="color:#6b7c5e;"><i>📸 拍摄日期：2026.4.29   设备：手机+望远镜（华为 pura70 pro + 圣途森林人8x32）  地点：图书馆门前的鸡蛋花树</i></p>
+
+          `,
+          },
+          {
+            id: "xiu-yan",
+            name: "绣眼",
+            latin: "Zosterops japonicus",
+            avatar: "images/xiu-yan/avatar-xiu-yan.png",
+            freeContent: `
+            <div class="map-title"><i class="fas fa-map-location-dot"></i> 观察地点：</div>
+            <img src="images/xiu-yan/campus-map.jpg" alt="校园地图" style="width: 100%; border-radius: 18px; box-shadow: 0 4px 12px rgba(0,0,0,0.08); margin-bottom: 24px;">
+            <h3>我求你了你别动了😭</h3>
+            <p>不清晰的视频：</p>
+            <video controls playsinline preload="metadata" style="width:100%; border-radius:24px; margin:10px 0;">
+              <source src="videos/xiu-yan/1.mp4" type="video/mp4">
+            </video>
+            <p style="color:#6b7c5e;"><i>📸 拍摄日期：2026.01.02   设备：华为 pura70 pro  地点：学二栋与三栋之间的树上</i></p>
+            <p>其实我也想多拍点，但是它的出没位置不太好，我在走廊上长时间眺望或拍摄容易被误解为在偷拍对面宿舍🥲</p>
+
+            <p>你别动你别动你别动😡</p>
+            <video controls playsinline preload="metadata" style="width:100%; border-radius:24px; margin:10px 0;">
+              <source src="videos/xiu-yan/petal_20260427_002823.mp4" type="video/mp4">
+            </video>
+            <p style="color:#6b7c5e;"><i>📸 拍摄日期：2026.04.27   设备：华为 pura70 pro  地点：学二栋与三栋之间的树上</i></p>
+          `,
+          },
+          {
+            id: "ye-lu",
+            name: "夜鹭",
+            latin: "Nycticorax nycticorax",
+            avatar: "images/ye-lu/avatar-ye-lu.jpg",
+            freeContent: `
+            <div class="map-title"><i class="fas fa-map-location-dot"></i> 观察地点：</div>
+            <img src="images/ye-lu/campus-map.jpg" alt="校园地图" style="width: 100%; border-radius: 18px; box-shadow: 0 4px 12px rgba(0,0,0,0.08); margin-bottom: 24px;">
+            <h3>夜师傅，我们喜欢你🥺</h3>
+            <div style="display:flex; gap:12px; margin:20px 0;">
+              <img src="images/ye-lu/IMG_20250605_074351_1.jpg" style="width:50%; border-radius:24px;">
+            </div>
+            <p style="color:#6b7c5e;"><i>📸 拍摄日期：2025.06.05   设备：华为 pura70 pro  地点：明湖</i></p>
+
+            <p>浮夸地捕鱼</p>
+            <div style="display:flex; gap:12px; margin:20px 0;">
+              <img src="images/ye-lu/IMG_20250629_143643.jpg" style="width:50%; border-radius:24px;">
+            </div>
+
+            <video controls playsinline preload="metadata" style="width:100%; border-radius:24px; margin:10px 0;">
+              <source src="videos/ye-lu/eat.mp4" type="video/mp4">
+            </video>
+            <p style="color:#6b7c5e;"><i>📸 拍摄日期：2025.06.29   设备：华为 pura70 pro  地点：明湖</i></p>
+
+            <p>残影亚成体</p>
+            <div style="display:flex; gap:12px; margin:20px 0;">
+              <img src="images/ye-lu/junior.jpg" style="width:50%; border-radius:24px;">
+            </div>
+            <p style="color:#6b7c5e;"><i>📸 拍摄日期：2025.04.22   设备：华为 pura70 pro  地点：明湖</i></p>
+
+            <p>千里眼夜师傅选择站在两层楼上等鱼</p>
+            <video controls playsinline preload="metadata" style="width:100%; border-radius:24px; margin:10px 0;">
+              <source src="videos/ye-lu/wait.mp4" type="video/mp4">
+            </video>
+            <p style="color:#6b7c5e;"><i>📸 拍摄日期：2025.06.14   设备：华为 pura70 pro  地点：明湖</i></p>
+          `,
+          },
+          {
+            id: "zao-juan",
+            name: "噪鹃",
+            latin: "Eudynamys scolopaceus",
+            avatar: "images/zao-juan/avatar-zao-juan.png",
+            freeContent: `
+            <div class="map-title"><i class="fas fa-map-location-dot"></i> 观察地点：</div>
+            <img src="images/zao-juan/campus-map.jpg" alt="校园地图" style="width: 100%; border-radius: 18px; box-shadow: 0 4px 12px rgba(0,0,0,0.08); margin-bottom: 24px;">
+            <h3>很吵的鸟</h3>
+            <p>激烈的求偶追逐战：</p>
+            <video controls playsinline preload="none" class="video-portrait">
+              <source src="videos/zao-juan/1.mp4" type="video/mp4">
+            </video>
+            <p>啊？踩背了：</p>
+            <video controls playsinline preload="none" class="video-portrait">
+              <source src="videos/zao-juan/2.mp4" type="video/mp4">
+            </video>
+            <p style="color:#6b7c5e;"><i>📸 拍摄日期：2026.01.31 设备：华为 pura70 pro  地点：旭日运动场前的木棉上</i></p>
+            <p>其实视频里那个断气的噪鹃叫是我吹的^_^</p>
+          `,
+          },
+          {
+            id: "zhu-jing-ban-jiu",
+            name: "珠颈斑鸠",
+            latin: "Spilopelia chinensis",
+            avatar: "images/zhu-jing-ban-jiu/avatar-zhu-jing-ban-jiu.jpg",
+            freeContent: `
+            <div class="map-title"><i class="fas fa-map-location-dot"></i> 观察地点：</div>
+            <img src="images/zhu-jing-ban-jiu/campus-map.jpg" alt="校园地图" style="width: 100%; border-radius: 18px; box-shadow: 0 4px 12px rgba(0,0,0,0.08); margin-bottom: 24px;">
+            <h3>古咕顾！</h3>
+
+            <div style="display:flex; gap:12px; margin:20px 0;">
+              <img src="images/zhu-jing-ban-jiu/IMG_20260414_112135_edit_725884727140799.jpg" style="width:50%; border-radius:24px;">
+            </div>
+
+            <video controls playsinline preload="metadata" style="width:100%; border-radius:24px; margin:10px 0;">
+              <source src="videos/zhu-jing-ban-jiu/petal_20260427_003432.mp4" type="video/mp4">
+            </video>
+             <p style="color:#6b7c5e;"><i>📸 拍摄日期：2026.04.14 设备：手机＋望远镜（华为 pura70 pro＋胜途 小钢炮8x32） 地点：旭日运动场前广场上的木棉树</i></p>
+          `,
+          },
+          {
+            id: "xuan-feng",
+            name: "玄风鹦鹉",
+            latin: "Nymphicus hollandicus",
+            avatar: "images/xuan-feng/avatar-xuan-feng.jpg",
+            freeContent: `
+            <div class="map-title"><i class="fas fa-map-location-dot"></i> 观察地点：</div>
+            <img src="images/xuan-feng/campus-map.jpg" alt="校园地图" style="width: 100%; border-radius: 18px; box-shadow: 0 4px 12px rgba(0,0,0,0.08); margin-bottom: 24px;">
+
+            <p style="font-size:1.5rem;">😰啊？</p>
+            <p>买冰淇淋时看到的。其实应该是逃逸的宠物鹦鹉。令人意外（羡慕）的是，照片里的人其实与它完全不认识。</p>
+            <img src="images/xuan-feng/xuan-feng-1.jpg" alt="玄风鹦鹉" style="width:100%; border-radius:20px; margin:15px 0;">
+            <img src="images/xuan-feng/xuan-feng-2.jpg" alt="玄风鹦鹉" style="width:100%; border-radius:20px; margin:15px 0;">
+            <p style="color:#6b7c5e;"><i>📸 拍摄日期：2025.04.05  设备：华为 pura70 pro  地点：兴安超市二楼蜜雪冰城前</i></p>
+          `,
+          },
+          {
+            id: "ji",
+            name: "鸡",
+            latin: "Gallus gallus domesticus",
+            avatar: "images/ji/avatar-ji.jpg",
+            freeContent: `
+            <div class="map-title"><i class="fas fa-map-location-dot"></i> 观察地点：</div>
+            <img src="images/ji/campus-map.jpg" alt="校园地图" style="width: 100%; border-radius: 18px; box-shadow: 0 4px 12px rgba(0,0,0,0.08); margin-bottom: 24px;">
+            <p>感谢d同学提供的图片</p>
+            <div style="display:flex; flex-wrap:wrap; gap:12px; margin:20px 0;">
+              <img src="images/ji/ji-1.jpg" style="width:calc(50% - 6px); border-radius:24px;">
+              <img src="images/ji/ji-2.jpg" style="width:calc(50% - 6px); border-radius:24px;">
+              <img src="images/ji/ji-3.jpg" style="width:calc(50% - 6px); border-radius:24px;">
+            </div>
+            <p style="color:#6b7c5e;"><i>📸 拍摄日期：2025.04.02 地点：华医行政楼</i></p>
+          `,
+          },
+          {
+            id: "mao",
+            name: "猫",
+            latin: "Felis catus",
+            avatar: "images/mao/avatar-mao.jpg",
+            freeContent: `
+            <div class="map-title"><i class="fas fa-map-location-dot"></i> 观察地点：</div>
+            <img src="images/mao/campus-map.jpg" alt="校园地图" style="width: 100%; border-radius: 18px; box-shadow: 0 4px 12px rgba(0,0,0,0.08); margin-bottom: 24px;">
+            <p>在这里写对猫的简介。可以多段文字。</p>
+            <div style="display:flex; gap:12px; margin:20px 0;">
+              <img src="images/mao/01.jpg" style="width:50%; border-radius:24px;">
+              <img src="images/mao/02.jpg" style="width:50%; border-radius:24px;">
+            </div>
+            <p>还可以插入视频：</p>
+            <video controls playsinline preload="metadata" style="width:100%; border-radius:24px; margin:10px 0;">
+              <source src="videos/mao/sing.mp4" type="video/mp4">
+            </video>
+            <p style="color:#6b7c5e;"><i>📸 拍摄日期：2025.04.05</i></p>
+          `,
+          },
+          {
+            id: "wei-zhi",
+            name: "未知",
+            latin: "?",
+            avatar: "images/wei-zhi/avatar-wei-zhi.png",
+            freeContent: `
+            <div class="map-title"><i class="fas fa-map-location-dot"></i> 观察地点：</div>
+            <img src="images/wei-zhi/campus-map.jpg" alt="校园地图" style="width: 100%; border-radius: 18px; box-shadow: 0 4px 12px rgba(0,0,0,0.08); margin-bottom: 24px;">
+            <p>1</p>
+            <video controls playsinline preload="metadata" style="width:100%; border-radius:24px; margin:10px 0;">
+              <source src="videos/wei-zhi/VID_20260330_160238.mp4" type="video/mp4">
+            </video>
+            <p style="color:#6b7c5e;"><i>📸 拍摄日期：2026.03.30 设备：华为 pura70 pro  地点：旭日运动场前的木棉上</i></p>
+          `,
+          },
+          {
+            id: "zuo-zhe",
+            name: "作者的话",
+            latin: "Auctoris verba",
+            avatar: "images/zuo-zhe/avatar-zuo-zhe.png",
+            freeContent: `
+            <div class="map-title"><i class="fas fa-map-location-dot"></i> 观察地点：</div>
+            <img src="images/zuo-zhe/campus-map.jpg" alt="校园地图" style="width: 100%; border-radius: 18px; box-shadow: 0 4px 12px rgba(0,0,0,0.08); margin-bottom: 24px;">
+            <h3>请输入文本</h3>
+            <p>  诚如标题所言，这个网站的内容完全是我个人的兴趣使然，既没有什么科学研究价值，也没有什么教育意义，更没有什么艺术追求。它只是我在校园里看到的一些鸟儿的记录和一些随想。</p>
+            <p>  这个网站事实上是由一个两种层面的外行制作的：观鸟外行与编程外行。制作这个网站的初衷，源于我经历了一年多的简陋地观鸟后，也产生了整理一番的念头。起初想过ppt、word等形式，然而都不够满意，最后想到html这种自由度极高的形式，虽然我是编程白痴，不过对使用ai也有一二心得，便壮着胆子开始了。</p>
+            <p>  在这个简陋的小东西上，你可以看见许多模糊的照片，这是因为在很长的一段时间里，我的记录设备只有一台手机。不过最近我购入了亲爱的望远镜🥰，终于可以拍出清晰的照片了</p>
+            <p>  （骗你的，有了设备没有鸟运也拍不出东西😭）</p>
+            <p>  在这里，向deepseek、我的手机、望远镜、"懂鸟"app、"merlin" app和陪伴我又不时和我捣乱的小鸟们表示表示诚挚的感谢</p>
+            
+          `,
+          },
+        ];
+
+        // DOM 元素
+        const homeView = document.getElementById("homeView");
+        const detailView = document.getElementById("detailView");
+        const birdsGrid = document.getElementById("birdsGrid");
+        const detailContent = document.getElementById("detailContent");
+        const backBtn = document.getElementById("backToHomeBtn");
+
+        const bgMusic = document.getElementById("bgMusic");
+        const musicToggleBtn = document.getElementById("musicToggleBtn");
+        const nextTrackBtn = document.getElementById("nextTrackBtn");
+        const musicLabel = document.getElementById("musicLabel");
+
+        const lightbox = document.getElementById("lightbox");
+        const lightboxInner = lightbox.querySelector("div");
+        const lightboxCloseBtn = document.getElementById("lightboxClose");
+
+        let musicPlaying = false;
+        let currentTrackIndex = 0;
+        let errorCount = 0;
+        const MAX_ERRORS = 5;
+        const playlist = bgMusicList;
+
+        let shuffledQueue = [];
+        let queueIndex = 0;
+
+        let currentBirdId = null;
+
+        function shuffleArray(arr) {
+          const a = [...arr];
+          for (let i = a.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [a[i], a[j]] = [a[j], a[i]];
+          }
+          return a;
+        }
+
+        function resetShuffledQueue() {
+          const indices = playlist.map((_, i) => i);
+          shuffledQueue = shuffleArray(indices);
+          queueIndex = 0;
+        }
+
+        function getNextTrackIndex() {
+          if (shuffledQueue.length === 0 || queueIndex >= shuffledQueue.length) {
+            resetShuffledQueue();
+          }
+          const nextIndex = shuffledQueue[queueIndex];
+          queueIndex++;
+          return nextIndex;
+        }
+
+        function loadTrack(index) {
+          if (playlist.length === 0) {
+            musicLabel.textContent = "🎵 无音乐";
+            return;
+          }
+          const track = playlist[index];
+          bgMusic.src = track.src;
+          musicLabel.textContent = `🎵 ${track.title}`;
+          bgMusic.load();
+        }
+
+        function playCurrentTrack() {
+          if (playlist.length === 0) return;
+          bgMusic.play().then(() => {
+            musicPlaying = true;
+            updateMusicButtonUI();
+          }).catch((err) => {
+            console.warn("播放被阻止:", err);
+            musicPlaying = false;
+            updateMusicButtonUI();
+            if (err.name === "NotAllowedError") {
+              musicLabel.textContent = "🎵 请点击播放按钮";
+            }
+          });
+        }
+
+        function pauseMusic() {
+          bgMusic.pause();
+          musicPlaying = false;
+          updateMusicButtonUI();
+        }
+
+        function toggleMusic() {
+          if (playlist.length === 0) return;
+          if (musicPlaying) { pauseMusic(); }
+          else { playCurrentTrack(); }
+        }
+
+        function nextTrack() {
+          if (playlist.length === 0) return;
+          const nextIndex = getNextTrackIndex();
+          currentTrackIndex = nextIndex;
+          loadTrack(currentTrackIndex);
+          if (musicPlaying) { playCurrentTrack(); }
+          else { updateMusicButtonUI(); }
+        }
+
+        function updateMusicButtonUI() {
+          const icon = musicToggleBtn.querySelector("i");
+          if (musicPlaying) {
+            musicToggleBtn.classList.remove("off");
+            icon.className = "fas fa-pause";
+          } else {
+            musicToggleBtn.classList.add("off");
+            icon.className = "fas fa-play";
+          }
+        }
+
+        function forceNextTrack() {
+          if (playlist.length === 0) return;
+          const nextIdx = getNextTrackIndex();
+          currentTrackIndex = nextIdx;
+          loadTrack(currentTrackIndex);
+          if (musicPlaying) { playCurrentTrack(); }
+          else { updateMusicButtonUI(); }
+        }
+
+        bgMusic.addEventListener("ended", () => {
+          if (musicPlaying) { nextTrack(); }
+          else {
+            currentTrackIndex = getNextTrackIndex();
+            loadTrack(currentTrackIndex);
+            updateMusicButtonUI();
+          }
+        });
+
+        bgMusic.addEventListener("error", () => {
+          console.error("❌ 音频加载失败:", bgMusic.src);
+          errorCount++;
+          if (errorCount >= MAX_ERRORS) {
+            console.warn("连续加载失败，停止自动切歌。");
+            musicPlaying = false;
+            updateMusicButtonUI();
+            musicLabel.textContent = "🎵 文件错误";
+            return;
+          }
+          if (musicPlaying) { nextTrack(); }
+          else {
+            currentTrackIndex = getNextTrackIndex();
+            loadTrack(currentTrackIndex);
+          }
+        });
+
+        bgMusic.addEventListener("canplay", () => {
+          errorCount = 0;
+          musicLabel.textContent = `🎵 ${playlist[currentTrackIndex].title}`;
+        });
+
+        musicToggleBtn.addEventListener("click", toggleMusic);
+        nextTrackBtn.addEventListener("click", () => {
+          const wasPlaying = musicPlaying;
+          forceNextTrack();
+          if (wasPlaying) { playCurrentTrack(); }
+          else { updateMusicButtonUI(); }
+        });
+
+        if (playlist.length > 0) {
+          resetShuffledQueue();
+          currentTrackIndex = getNextTrackIndex();
+          loadTrack(currentTrackIndex);
+          bgMusic.volume = 0.35;
+        } else {
+          musicLabel.textContent = "🎵 暂无曲目";
+        }
+
+        function pauseAllMedia() {
+          document.querySelectorAll("video, audio").forEach((el) => {
+            if (!el.paused) el.pause();
+          });
+        }
+
+        window.addEventListener("beforeunload", () => {
+          pauseAllMedia();
+        });
+
+        function handleVideoPlay() {
+          if (musicPlaying) pauseMusic();
+        }
+
+        function bindVideoEvents() {
+          document.querySelectorAll("video").forEach((v) => {
+            v.removeEventListener("play", handleVideoPlay);
+            v.addEventListener("play", handleVideoPlay);
+          });
+        }
+
+        function openLightbox(mediaElement) {
+          lightboxInner.innerHTML = "";
+          if (mediaElement.tagName === "IMG") {
+            const img = document.createElement("img");
+            img.src = mediaElement.src;
+            img.alt = mediaElement.alt || "";
+            lightboxInner.appendChild(img);
+          } else if (mediaElement.tagName === "VIDEO") {
+            const video = document.createElement("video");
+            video.src = mediaElement.querySelector("source")?.src || mediaElement.currentSrc;
+            video.controls = true;
+            video.autoplay = false;
+            video.playsInline = false;
+            if (mediaElement.poster) video.poster = mediaElement.poster;
+            lightboxInner.appendChild(video);
+          }
+          lightbox.style.display = "flex";
+        }
+
+        function closeLightbox() {
+          lightbox.style.display = "none";
+          lightboxInner.innerHTML = "";
+        }
+
+        lightboxCloseBtn.addEventListener("click", (e) => {
+          e.stopPropagation();
+          closeLightbox();
+        });
+
+        lightbox.addEventListener("click", (e) => {
+          if (e.target === lightbox) { closeLightbox(); }
+        });
+
+        function bindMediaZoom() {
+          const content = document.getElementById("detailContent");
+          if (!content) return;
+          const images = content.querySelectorAll(".free-content img");
+          const videos = content.querySelectorAll(".free-content video");
+
+          images.forEach((img) => {
+            img.addEventListener("click", (e) => {
+              e.stopPropagation();
+              openLightbox(img);
+            });
+          });
+
+          videos.forEach((video) => {
+            video.addEventListener("click", (e) => {
+              const rect = video.getBoundingClientRect();
+              const clickY = e.clientY - rect.top;
+              if (clickY > rect.height - 40) return;
+              e.preventDefault();
+              e.stopPropagation();
+              openLightbox(video);
+            });
+          });
+        }
+
+        function renderHome() {
+          let html = "";
+          birdsData.forEach((b) => {
+            html += `<div class="bird-card" data-id="${b.id}">
+            <img class="bird-avatar" src="${b.avatar}" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=\\'http://www.w3.org/2000/svg\\' width=\\'120\\' height=\\'120\\'%3E%3Ccircle cx=\\'60\\' cy=\\'60\\' r=\\'50\\' fill=\\'%23b7aa99\\'/%3E%3Ctext x=\\'30\\' y=\\'75\\' font-size=\\'40\\' fill=\\'%23fff\\'%3E🐦%3C/text%3E%3C/svg%3E'">
+            <div class="bird-name">${b.name}</div>
+            <div class="bird-latin">${b.latin}</div>
+          </div>`;
+          });
+          birdsGrid.innerHTML = html;
+          document.querySelectorAll(".bird-card").forEach((card) => {
+            card.addEventListener("click", () => {
+              const bird = birdsData.find((b) => b.id === card.dataset.id);
+              if (bird) showDetail(bird);
+            });
+          });
+        }
+
+        function showDetail(bird, addToHistory = true) {
+          pauseAllMedia();
+          currentBirdId = bird.id;
+
+          const html = `
+          <div class="detail-header">
+            <h2>${bird.name}</h2>
+          </div>
+          <div class="free-content">
+            ${bird.freeContent}
+          </div>
+        `;
+          detailContent.innerHTML = html;
+          homeView.style.display = "none";
+          detailView.style.display = "block";
+          bindVideoEvents();
+          bindMediaZoom();
+          window.scrollTo(0, 0);
+
+          if (addToHistory) {
+            history.pushState({ view: "detail", birdId: bird.id }, "", `#${bird.id}`);
+          }
+        }
+
+        function backToHome(fromPopState = false) {
+          pauseAllMedia();
+          closeLightbox();
+          detailView.style.display = "none";
+          homeView.style.display = "block";
+          currentBirdId = null;
+
+          if (!fromPopState) {
+            history.pushState({ view: "home" }, "", location.pathname);
+          }
+        }
+
+        backBtn.addEventListener("click", () => {
+          backToHome();
+        });
+
+        window.addEventListener("popstate", (event) => {
+          const state = event.state;
+          if (!state) { backToHome(true); return; }
+          if (state.view === "home") { backToHome(true); }
+          else if (state.view === "detail" && state.birdId) {
+            const bird = birdsData.find((b) => b.id === state.birdId);
+            if (bird) { showDetail(bird, false); }
+            else { backToHome(true); }
+          }
+        });
+
+        history.replaceState({ view: "home" }, "", location.pathname);
+
+        renderHome();
+        updateMusicButtonUI();
+      })();
+    </script>
+  </body>
+</html>
