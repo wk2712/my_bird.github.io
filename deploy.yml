@@ -2,33 +2,25 @@ name: Deploy to GitHub Pages
 
 on:
   push:
-    branches: [ master ]  
-  workflow_dispatch:      
+    branches: [ master ]
+  workflow_dispatch:
 
 permissions:
   contents: read
   pages: write
   id-token: write
 
-concurrency:
-  group: "pages"
-  cancel-in-progress: false
-
 jobs:
-  deploy:
+  build-and-deploy:
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout repository
+      - name: Checkout
         uses: actions/checkout@v4
         with:
-          lfs: true           
-
-      # ★★★ 这就是我们新增的关键步骤 ★★★
-      - name: Checkout LFS objects
-        run: git lfs checkout
+          lfs: true          # 自动下载所有 Git LFS 文件
 
       - name: Setup Pages
         uses: actions/configure-pages@v4
@@ -36,7 +28,7 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: '.'           
+          path: '.'
 
       - name: Deploy to GitHub Pages
         id: deployment
