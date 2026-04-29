@@ -2,8 +2,8 @@ name: Deploy to GitHub Pages
 
 on:
   push:
-    branches: [ master ]  # 当 master 分支有推送时自动部署
-  workflow_dispatch:      # 允许手动触发
+    branches: [ master ]  
+  workflow_dispatch:      
 
 permissions:
   contents: read
@@ -24,7 +24,11 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
-          lfs: true           # 这个就是关键：自动下载 LFS 大文件
+          lfs: true           
+
+      # ★★★ 这就是我们新增的关键步骤 ★★★
+      - name: Checkout LFS objects
+        run: git lfs checkout
 
       - name: Setup Pages
         uses: actions/configure-pages@v4
@@ -32,7 +36,7 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: '.'           # 将整个仓库作为站点文件
+          path: '.'           
 
       - name: Deploy to GitHub Pages
         id: deployment
